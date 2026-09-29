@@ -1,81 +1,42 @@
-# Tarea 3 — Beam avanzado
+# Tarea 3 — Pipeline de Streaming Avanzado con Apache Beam
 
-Proyecto base autocontenido para la asignatura **Streaming de datos y sus
-aplicaciones**. La tarea consiste en completar un pipeline de pagos con tiempo
-de evento, ventanas, estado por clave y una salida idempotente.
+Proyecto e implementación del pipeline de procesamiento de pagos en tiempo real para la asignatura **Streaming de datos y sus aplicaciones**.
+El sistema procesa eventos de transacciones aplicando tiempo de evento, ventanas fijas, gestión de estado por clave (*stateful processing*) y materialización idempotente.
 
-El repositorio es deliberadamente un esqueleto: `notebook.py` contiene la
-consigna, contratos y funciones sin implementación. No incluye la solución.
+---
 
-## Objetivo
+## Estructura del Proyecto
 
-Producir totales confirmados por comercio y minuto:
-
-- usando `event_time`, no el tiempo de llegada;
-- tolerando hasta 120 segundos de atraso;
-- descartando estados distintos de `CONFIRMED`;
-- deduplicando `event_id` dentro de cada comercio;
-- conservando metadatos de ventana y pane;
-- materializando la salida mediante una clave idempotente.
-
-## Ejecutar con Docker
-
-Desde este directorio:
-
-```bash
-docker compose up --build notebook
+```text
+.
+├── data/
+│   └── payments.jsonl          # Datos de entrada (eventos de pagos)
+├── tests/                      # Suite de pruebas unitarias y de integración
+├── notebook.py                 # Pipeline de Apache Beam e implementación (Marimo)
+├── docker-compose.yml          # Entorno dockerizado para ejecución
+├── pyproject.toml / uv.lock    # Configuración de dependencias con uv
+└── README.md                   # Documentación y decisiones de arquitectura
 ```
 
-Abrir <http://localhost:2718>. Docker inicia Marimo en modo editor porque la
-tarea requiere completar las celdas de código. Los cambios en `notebook.py` se
-guardan en el directorio local.
+## Instrucciones de Ejecución
+docker exec -it streaming-fpuna-clase6-tarea-notebook-1 uv run pytest
 
-El editor usa `--no-token` para simplificar el trabajo en `localhost`; no debe
-exponerse directamente a una red pública.
+## Evidencia
+C:\Users\danny\streaming-fpuna-clase6-tarea>docker exec -it streaming-fpuna-clase6-tarea-notebook-1 uv run pytest
+Bytecode compiled 6639 files in 2.04s
+======================================================= test session starts =======================================================
+platform linux -- Python 3.12.12, pytest-8.4.2, pluggy-1.6.0
+rootdir: /app
+configfile: pyproject.toml
+plugins: anyio-4.14.2, platformdirs-4.12.1
+collected 13 items
 
-## Ejecutar con uv
+tests/test_assignment.py .............                                                                                      [100%]
 
-```bash
-uv sync --frozen
-uv run marimo edit notebook.py
-```
+======================================================= 13 passed in 2.55s ========================================================
 
-## Trabajar con tests
+What's next:
+    Try Docker Debug for seamless, persistent debugging tools in any container or image → docker debug streaming-fpuna-clase6-tarea-notebook-1
+    Learn more at https://docs.docker.com/go/debug-cli/
 
-```bash
-uv run pytest
-```
-
-Los tests se entregan deliberadamente en rojo: las funciones del notebook
-lanzan `NotImplementedError`. El objetivo es implementar las celdas hasta
-obtener una suite completamente verde.
-
-Los tests cargan las funciones directamente desde `notebook.py`; no hay que
-copiar la solución a otro módulo.
-
-Para validar además estilo y estructura:
-
-```bash
-uv run ruff check notebook.py
-uv run marimo check --strict notebook.py
-```
-
-Dentro del contenedor también se puede ejecutar:
-
-```bash
-docker compose exec notebook uv run pytest
-```
-
-## Entrega
-
-Entregar un repositorio propio que incluya:
-
-- `notebook.py` con todas las funciones implementadas;
-- evidencia de ejecución del pipeline;
-- todas las pruebas provistas para desorden, duplicados, atraso y reintentos
-  ejecutadas y aprobadas;
-- un README breve con decisiones y trade-offs;
-- instrucciones reproducibles con Docker o `uv`.
-
-No modificar `data/payments.jsonl`; puede agregarse un conjunto de datos
-adicional para las pruebas.
+C:\Users\danny\streaming-fpuna-clase6-tarea>
